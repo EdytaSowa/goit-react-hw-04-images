@@ -1,117 +1,121 @@
 import { Searchbar } from './Searchbar/Searchbar';
-import { Component } from 'react';
+import { useState } from 'react';
 import { getFetchData } from './api/api';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
 
+export const App = () => {
+  const [query, setQuery] = useState('');
+  const [images, setImages] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  // const [isPaginationShow, setPaginationShow] = useState(false);
+  const [urlImageModal, setUrlImageModal] = useState('');
+  const [isModalShow, setModalShow] = useState(false);
+  const [, setError] = useState('');
+  const [imagesAfterPagination, setImagesAfterPagination] = useState('');
 
-export class App extends Component {
-  state = {
-    query: '',
-    images: [],
-    isLoading: false,
-    page: 1,
-    isPaginationShow: false,
-    urlImageModal: '',
-    isModalShow: false,
-    error: '',
-    imagesAfterPagination: 0,
-  };
+  const onClickMore = async () => {
+    setLoading(true);
 
-  onClickMore = async () => {
-    this.setState({ isLoading: true });
-
-    const images = this.state.images;
+    // const images = images;
 
     try {
-      const imagesAfterPagination = await getFetchData(
-        this.state.query,
-        this.state.page + 1
-      );
-      this.setState({ imagesAfterPagination: imagesAfterPagination });
-      this.setState(prevState => ({ page: prevState.page + 1 }));
-      this.setState({ images: [...images, ...imagesAfterPagination] });
-      this.setState({ isLoading: false });
+      const imagesAfterPagination2 = await getFetchData(query, page + 1);
+
+      // this.setState({ imagesAfterPagination: imagesAfterPagination });
+      setImagesAfterPagination(imagesAfterPagination2);
+      console.log(imagesAfterPagination)
+      console.log(imagesAfterPagination2)
+      
+      // this.setState(prevState => ({ page: prevState.page + 1 }));
+      // setPage(prevState => ({ page: prevState.page + 1 }));
+      setPage(page + 1)
+
+      // this.setState({ images: [...images, ...imagesAfterPagination] });
+      setImages([...images, ...imagesAfterPagination2] );
+
+      setLoading(false);
     } catch (err) {
-      this.setState({ error: err });
+      setError(err);
     } finally {
-      this.setState({ isLoading: false });
+      setLoading(false);
     }
   };
 
-  onModalClose = () => {
-    this.setState({ isModalShow: false });
+  const onModalClose = () => {
+    setModalShow(false)
+    // this.setState({ isModalShow: false });
   };
 
-  onImageClick = e => {
-    this.setState({ isModalShow: true });
+  const onImageClick = e => {
+    // this.setState({ isModalShow: true });
+    setModalShow(true);
     const url = e.target.name;
-    this.setState({ urlImageModal: url });
+    // this.setState({ urlImageModal: url });
+    setUrlImageModal(url)
   };
 
-  onSubmit = async e => {
+  const onSubmit = async e => {
     e.preventDefault();
+    
 
-    this.setState({ isLoading: true });
-    this.setState({ imagesAfterPagination: 0 });
+    // this.setState({ isLoading: true });
+    setLoading(true);
+    // this.setState({ imagesAfterPagination: 0 });
+    // setImagesAfterPagination('')
 
     const query = e.target.elements.query.value;
 
-
-
     try {
-      const images = await getFetchData(query, this.state.page);
-      this.setState({ images: images });
-      this.setState({ query: query });
-      this.setState({ isLoading: false });
-      this.setState({ isPaginationShow: true });
+      const images = await getFetchData(query,page);
+      // this.setState({ images: images });
+      setImages(images)
+      
+      // this.setState({ query: query });
+      setQuery(query)
+
+      // this.setState({ isLoading: false });
+      setLoading(false);
+
+      // this.setState({ isPaginationShow: true });
     } catch (err) {
-      this.setState({ error: err });
+      setError( err );
     } finally {
-      this.setState({ isLoading: false });
+      setLoading(false);
     }
   };
 
-  render() {
-    return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr',
-          gridGap: '16px',
-          paddingBottom: '24px',
-        }}
-      >
-        <Searchbar onSubmit={this.onSubmit} />
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gridGap: '16px',
+        paddingBottom: '24px',
+      }}
+    >
+      <Searchbar onSubmit={onSubmit} />
 
-        {this.state.isLoading ? (
-          <Loader
-          />
-        ) : null}
+      {isLoading ? <Loader /> : null}
 
-        <ImageGallery
-          images={this.state.images}
-          onImageClick={this.onImageClick}
-        />
+      <ImageGallery images={images} onImageClick={onImageClick} />
 
-        {!this.state.isModalShow ? null : (
-          <Modal
-            url={this.state.urlImageModal}
-            closeModal={this.onModalClose}
-          />
-        )}
+      {!isModalShow ? null : (
+        <Modal url={urlImageModal} closeModal={onModalClose} />
+      )}
 
-        {this.state.imagesAfterPagination.length < 12 ||
-        this.state.images.length === 0 ? null : this.state.isLoading ? (
-          <Loader
-          />
-        ) : (
-          <Button onClick={this.onClickMore} />
-        )}
+      {((imagesAfterPagination.length < 12 && imagesAfterPagination.length > 0 ) ||
+      images.length === 0) ? null : ( isLoading ? (
+        <Loader />
+      ) : (
+        <Button onClick={onClickMore} />
+      ))}
+
     
-      </div>
-    );
-  }
-}
+     
+    </div>
+  );
+};

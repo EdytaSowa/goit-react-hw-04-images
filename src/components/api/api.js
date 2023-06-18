@@ -9,7 +9,7 @@ export const getFetchData = async (query,page) => {
   const response = await axios.get(
     `/?key=${MY_KEY}&q=${query}&image_type=photo&orientation=horizontal&per_page=12&page=${page}`
   );
-console.log(response.data.total)
+
   return response.data.hits;
 };
 
