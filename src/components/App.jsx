@@ -23,19 +23,19 @@ export const App = () => {
     // const images = images;
 
     try {
-      const imagesAfterPagination2 = await getFetchData(query, page + 1);
+      const imagesAfterPagination = await getFetchData(query, page + 1);
 
       // this.setState({ imagesAfterPagination: imagesAfterPagination });
-      setImagesAfterPagination(imagesAfterPagination2);
+      setImagesAfterPagination(imagesAfterPagination);
       console.log(imagesAfterPagination)
-      console.log(imagesAfterPagination2)
+      
       
       // this.setState(prevState => ({ page: prevState.page + 1 }));
       // setPage(prevState => ({ page: prevState.page + 1 }));
       setPage(page + 1)
 
       // this.setState({ images: [...images, ...imagesAfterPagination] });
-      setImages([...images, ...imagesAfterPagination2] );
+      setImages([...images, ...imagesAfterPagination] );
 
       setLoading(false);
     } catch (err) {
@@ -65,7 +65,7 @@ export const App = () => {
     // this.setState({ isLoading: true });
     setLoading(true);
     // this.setState({ imagesAfterPagination: 0 });
-    // setImagesAfterPagination('')
+    setImagesAfterPagination('')
 
     const query = e.target.elements.query.value;
 
