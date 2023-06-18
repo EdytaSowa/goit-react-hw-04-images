@@ -11,7 +11,7 @@ export const App = () => {
   const [images, setImages] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  // const [isPaginationShow, setPaginationShow] = useState(false);
+
   const [urlImageModal, setUrlImageModal] = useState('');
   const [isModalShow, setModalShow] = useState(false);
   const [, setError] = useState('');
@@ -20,22 +20,15 @@ export const App = () => {
   const onClickMore = async () => {
     setLoading(true);
 
-    // const images = images;
-
     try {
       const imagesAfterPagination = await getFetchData(query, page + 1);
 
-      // this.setState({ imagesAfterPagination: imagesAfterPagination });
       setImagesAfterPagination(imagesAfterPagination);
-      console.log(imagesAfterPagination)
-      
-      
-      // this.setState(prevState => ({ page: prevState.page + 1 }));
-      // setPage(prevState => ({ page: prevState.page + 1 }));
-      setPage(page + 1)
+      console.log(imagesAfterPagination);
 
-      // this.setState({ images: [...images, ...imagesAfterPagination] });
-      setImages([...images, ...imagesAfterPagination] );
+      setPage(page + 1);
+
+      setImages([...images, ...imagesAfterPagination]);
 
       setLoading(false);
     } catch (err) {
@@ -46,43 +39,29 @@ export const App = () => {
   };
 
   const onModalClose = () => {
-    setModalShow(false)
-    // this.setState({ isModalShow: false });
+    setModalShow(false);
   };
 
   const onImageClick = e => {
-    // this.setState({ isModalShow: true });
     setModalShow(true);
     const url = e.target.name;
-    // this.setState({ urlImageModal: url });
-    setUrlImageModal(url)
+    setUrlImageModal(url);
   };
 
   const onSubmit = async e => {
     e.preventDefault();
-    
-
-    // this.setState({ isLoading: true });
     setLoading(true);
-    // this.setState({ imagesAfterPagination: 0 });
-    setImagesAfterPagination('')
+    setImagesAfterPagination('');
 
     const query = e.target.elements.query.value;
 
     try {
-      const images = await getFetchData(query,page);
-      // this.setState({ images: images });
-      setImages(images)
-      
-      // this.setState({ query: query });
-      setQuery(query)
-
-      // this.setState({ isLoading: false });
+      const images = await getFetchData(query, page);
+      setImages(images);
+      setQuery(query);
       setLoading(false);
-
-      // this.setState({ isPaginationShow: true });
     } catch (err) {
-      setError( err );
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -107,15 +86,13 @@ export const App = () => {
         <Modal url={urlImageModal} closeModal={onModalClose} />
       )}
 
-      {((imagesAfterPagination.length < 12 && imagesAfterPagination.length > 0 ) ||
-      images.length === 0) ? null : ( isLoading ? (
+      {(imagesAfterPagination.length < 12 &&
+        imagesAfterPagination.length > 0) ||
+      images.length === 0 ? null : isLoading ? (
         <Loader />
       ) : (
         <Button onClick={onClickMore} />
-      ))}
-
-    
-     
+      )}
     </div>
   );
 };
