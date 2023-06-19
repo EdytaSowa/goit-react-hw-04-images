@@ -1,5 +1,5 @@
 import { Searchbar } from './Searchbar/Searchbar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getFetchData } from './api/api';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
@@ -11,10 +11,8 @@ export const App = () => {
   const [images, setImages] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-
   const [urlImageModal, setUrlImageModal] = useState('');
   const [isModalShow, setModalShow] = useState(false);
-  const [, setError] = useState('');
   const [imagesAfterPagination, setImagesAfterPagination] = useState('');
 
   const onClickMore = async () => {
@@ -22,17 +20,12 @@ export const App = () => {
 
     try {
       const imagesAfterPagination = await getFetchData(query, page + 1);
-
       setImagesAfterPagination(imagesAfterPagination);
-      console.log(imagesAfterPagination);
-
       setPage(page + 1);
-
       setImages([...images, ...imagesAfterPagination]);
-
       setLoading(false);
     } catch (err) {
-      setError(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -41,6 +34,14 @@ export const App = () => {
   const onModalClose = () => {
     setModalShow(false);
   };
+
+  useEffect(() => {
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Escape') {
+        onModalClose();
+      }
+    });
+  }, []);
 
   const onImageClick = e => {
     setModalShow(true);
@@ -61,7 +62,7 @@ export const App = () => {
       setQuery(query);
       setLoading(false);
     } catch (err) {
-      setError(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }
